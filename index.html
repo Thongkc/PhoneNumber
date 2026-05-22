@@ -414,11 +414,53 @@ body {
 .three-gua-section.visible .gua-panel:nth-child(3) { animation-delay: 0.16s; }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 580px) {
-  .three-gua-row { grid-template-columns: 1fr; }
-  .sum-grid { grid-template-columns: 1fr; }
-  .phone-input { font-size: 18px; letter-spacing: 3px; }
-  .calc-btn { padding: 0 1.1rem; font-size: 19px; }
+@media (max-width: 640px) {
+  .page { padding: 2rem 1.25rem 4rem; }
+
+  /* Header */
+  .header { margin-bottom: 2rem; }
+  .header h1 { font-size: 42px; }
+  .header-sub { font-size: 10px; letter-spacing: 3px; }
+
+  /* Input */
+  .input-wrap { padding: 1.25rem 1rem 1rem; border-radius: 14px; }
+  .phone-input { font-size: 18px; letter-spacing: 3px; padding: 0.75rem 0.75rem; }
+  .calc-btn { padding: 0 1rem; font-size: 18px; }
+
+  /* Sum cards — stack */
+  .sum-grid { grid-template-columns: 1fr; gap: 10px; }
+  .sum-card { padding: 1rem 1.25rem; }
+
+  /* 3 gua panels — stack vertically */
+  .three-gua-row { grid-template-columns: 1fr; gap: 14px; }
+
+  /* Each panel wider, more breathing room */
+  .gua-panel { padding: 1.25rem 1.25rem; border-radius: 14px; }
+  .gua-panel-outer { padding-left: 36px; } /* room for outside labels */
+
+  /* Hexagram lines bigger on mobile */
+  .yao-inner { width: 140px; }
+  .yao-solid-bar { width: 140px; }
+  .yao-broken-l, .yao-broken-r { width: 64px; }
+
+  /* Trigram labels */
+  .trigram-label { justify-content: flex-start; padding-left: 8px; }
+  .tri-name { font-size: 16px; }
+
+  /* Hexagram result name */
+  .hex-name { font-size: 30px; }
+
+  /* Side labels — reposition for stacked layout */
+  .ti-yong-label { left: -32px; font-size: 11px; }
+
+  /* Section label */
+  .section-label-text { font-size: 9px; letter-spacing: 3px; }
+
+  /* Moving note */
+  .moving-note { font-size: 9px; }
+
+  /* Pills */
+  .digit-pill { width: 34px; height: 34px; font-size: 16px; }
 }
 </style>
 </head>
