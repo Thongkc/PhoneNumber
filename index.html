@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Minna Phone Number Calculation · 号码风水</title>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c96a;
+  --gold-dim: rgba(201,168,76,0.18);
+  --gold-border: rgba(201,168,76,0.22);
+  --cream: #f5ead4;
+  --bg: #0d0d0f;
+  --surface: #131316;
+  --surface2: #1a1a1f;
+  --surface3: #202028;
+  --border: rgba(255,255,255,0.07);
+  --text: #e8e0d0;
+  --text-dim: rgba(232,224,208,0.45);
+  --text-faint: rgba(232,224,208,0.2);
+  --shang-col: #6aa8d8;
+  --xia-col: #d4a84a;
+  --green: #7bbf8a;
+  --purple: #a87bbb;
+  --red-dot: #e05555;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 100%);
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── PAGE LAYOUT ── */
+.page { max-width: 780px; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
+
+/* ── HEADER ── */
+.header { text-align: center; margin-bottom: 3.5rem; }
+.header-eyebrow {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 6px; text-transform: uppercase;
+  color: var(--gold); opacity: 0.6;
+  margin-bottom: 1.25rem;
+}
+.header h1 {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: clamp(42px, 9vw, 68px);
+  color: var(--gold-light);
+  line-height: 1;
+  letter-spacing: 2px;
+  margin-bottom: 0.4rem;
+}
+.header-sub {
+  font-size: 11px; letter-spacing: 5px;
+  text-transform: uppercase; font-weight: 400;
+  color: var(--text-dim); margin-bottom: 1rem;
+}
+.header-rule {
+  width: 48px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: 0 auto;
+}
+
+/* ── INPUT ── */
+.input-wrap {
+  background: var(--surface);
+  border: 1px solid var(--gold-border);
+  border-radius: 20px;
+  padding: 2rem 2rem 1.5rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+.input-wrap::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 20px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+.input-label {
+  font-size: 10px; letter-spacing: 4px;
+  text-transform: uppercase; font-weight: 500;
+  color: var(--gold); opacity: 0.55;
+  margin-bottom: 1rem; display: block;
+}
+.input-row { display: flex; gap: 10px; margin-bottom: 0.75rem; }
+.phone-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem 1.25rem;
+  font-size: 24px; letter-spacing: 6px;
+  color: var(--cream);
+  font-family: 'Inter', sans-serif; font-weight: 300;
+  outline: none;
+  transition: border-color 0.25s, background 0.25s;
+}
+.phone-input::placeholder { color: var(--text-faint); font-size: 15px; letter-spacing: 3px; }
+.phone-input:focus { border-color: rgba(201,168,76,0.5); background: var(--surface3); }
+.calc-btn {
+  background: linear-gradient(135deg, #7a5f1e 0%, var(--gold) 100%);
+  border: none; border-radius: 12px;
+  padding: 0 1.75rem;
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 22px; color: #0d0d0f;
+  cursor: pointer; letter-spacing: 2px;
+  transition: opacity 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+.calc-btn:hover { opacity: 0.88; }
+.calc-btn:active { transform: scale(0.97); }
+.error-msg { font-size: 12px; color: #d07070; letter-spacing: 0.5px; min-height: 16px; text-align: center; }
+
+/* ── DIGIT PILLS ── */
+.split-section { display: none; margin-bottom: 2rem; }
+.split-section.visible { display: block; }
+.split-label-row {
+  display: flex; justify-content: center; gap: 48px;
+  margin-bottom: 0.6rem;
+}
+.split-label {
+  font-size: 10px; letter-spacing: 4px;
+  text-transform: uppercase; font-weight: 500;
+}
+.split-label.shang { color: var(--shang-col); }
+.split-label.xia   { color: var(--xia-col); }
+.pills-row { display: flex; gap: 4px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.digit-pill {
+  width: 38px; height: 38px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 400;
+  transition: transform 0.15s;
+}
+.digit-pill:hover { transform: translateY(-2px); }
+.pill-shang { background: rgba(106,168,216,0.1); color: var(--shang-col); border: 1px solid rgba(106,168,216,0.2); }
+.pill-xia   { background: rgba(212,168,74,0.1);  color: var(--xia-col);   border: 1px solid rgba(212,168,74,0.2); }
+.pill-divider { width: 1px; height: 28px; background: var(--border); margin: 0 6px; }
+
+/* ── SUM CARDS ── */
+.results-section { display: none; margin-bottom: 2.5rem; }
+.results-section.visible { display: block; }
+.sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sum-card {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  position: relative; overflow: hidden;
+}
+.sum-card.shang { border: 1px solid rgba(106,168,216,0.2); }
+.sum-card.xia   { border: 1px solid rgba(212,168,74,0.2); }
+.sum-card-title {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 22px; letter-spacing: 3px; margin-bottom: 1rem;
+}
+.sum-card.shang .sum-card-title { color: var(--shang-col); }
+.sum-card.xia   .sum-card-title { color: var(--xia-col); }
+.sum-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.sum-row:last-child { border-bottom: none; }
+.sum-row-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+.sum-row-val { font-size: 13px; font-weight: 500; color: var(--text); letter-spacing: 2px; }
+.sum-row-val.big { font-family: 'Noto Serif SC', serif; font-size: 30px; font-weight: 700; }
+.sum-card.shang .sum-row-val.big { color: var(--shang-col); }
+.sum-card.xia   .sum-row-val.big { color: var(--xia-col); }
+.sum-card .bg-hanzi {
+  position: absolute; right: -6px; bottom: -14px;
+  font-family: 'Ma Shan Zheng', cursive; font-size: 80px;
+  opacity: 0.04; pointer-events: none; line-height: 1;
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 1.25rem;
+}
+.section-label::before, .section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--border);
+}
+.section-label-text {
+  font-size: 10px; letter-spacing: 5px;
+  text-transform: uppercase; color: var(--text-faint);
+  white-space: nowrap;
+}
+
+/* ── 3 HEXAGRAMS SIDE BY SIDE ── */
+.three-gua-section { display: none; }
+.three-gua-section.visible { display: block; }
+.three-gua-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+/* Each gua panel */
+.gua-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.5rem 1rem;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0; position: relative; overflow: hidden;
+  transition: border-color 0.3s;
+}
+.gua-panel:hover { border-color: var(--gold-border); }
+.gua-panel::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: 18px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.02) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Panel header */
+.gua-panel-header { text-align: center; margin-bottom: 1.5rem; }
+.gua-panel-zh {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 17px; letter-spacing: 4px;
+  color: var(--gold-light); margin-bottom: 2px;
+}
+.gua-panel-sub {
+  font-size: 9px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--text-faint);
+}
+
+/* Hexagram lines area */
+.hex-lines-wrap {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+  width: 100%; margin-bottom: 1.25rem;
+}
+.hex-separator {
+  width: 100%; height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+/* Individual yao line */
+.yao-row {
+  display: flex; align-items: center;
+  justify-content: center; gap: 0;
+  width: 100%; position: relative;
+  height: 12px;
+}
+.yao-inner {
+  display: flex; align-items: center;
+  justify-content: center; gap: 8px;
+  width: 120px; flex-shrink: 0;
+}
+.yao-solid-bar {
+  width: 120px; height: 9px;
+  background: var(--gold-light);
+  border-radius: 3px; opacity: 0.82;
+}
+.yao-broken-l, .yao-broken-r {
+  width: 54px; height: 9px;
+  background: var(--gold-light);
+  border-radius: 3px; opacity: 0.82;
+}
+.yao-dot-wrap {
+  width: 22px; display: flex;
+  align-items: center; justify-content: flex-start;
+  margin-left: 8px;
+}
+.yao-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--red-dot);
+  box-shadow: 0 0 8px rgba(220,80,80,0.8);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(0.8); }
+}
+
+/* Trigram labels */
+.trigram-label {
+  display: flex; align-items: center;
+  justify-content: center; gap: 8px;
+  width: 100%; padding: 6px 0;
+}
+.tri-symbol { font-size: 20px; line-height: 1; }
+.tri-info { text-align: left; }
+.tri-name {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 16px; letter-spacing: 1px;
+  color: var(--text);
+}
+.tri-element {
+  font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text-faint);
+}
+
+/* Hexagram result name */
+.hex-result {
+  text-align: center; margin-top: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  width: 100%;
+}
+.hex-num {
+  font-size: 9px; letter-spacing: 3px;
+  color: var(--text-faint); margin-bottom: 4px;
+}
+.hex-name {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 26px; letter-spacing: 4px;
+  color: var(--gold-light);
+}
+
+/* Moving yao note */
+.moving-note {
+  font-size: 10px; letter-spacing: 2px;
+  color: rgba(220,80,80,0.55);
+  text-align: center; margin-top: 1.5rem;
+}
+
+/* ── 用卦 / 体卦 labels ── */
+.ti-yong-label {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1.3;
+  writing-mode: vertical-rl;
+  padding: 5px 3px;
+  border-radius: 6px;
+  width: 20px;
+  position: absolute;
+  left: -30px;
+}
+.ti-yong-label.yong {
+  color: #e8a050;
+  background: rgba(232,160,80,0.08);
+  border: 1px solid rgba(232,160,80,0.2);
+}
+.ti-yong-label.ti {
+  color: rgba(232,224,208,0.3);
+  background: rgba(232,224,208,0.03);
+  border: 1px solid rgba(232,224,208,0.08);
+}
+
+/* Outer wrapper for panel */
+.gua-panel-outer {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+.gua-panel-with-labels {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 8px;
+}
+.gua-side-labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 8px;
+  padding: 0;
+  width: 26px;
+}
+
+/* ── 五行生克 result ── */
+.wuxing-result {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(201,168,76,0.2);
+  background: rgba(201,168,76,0.05);
+  text-align: center;
+  width: 100%;
+}
+.wuxing-result-label {
+  font-size: 9px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--text-faint);
+  margin-bottom: 4px;
+}
+.wuxing-result-value {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 28px; letter-spacing: 4px;
+  color: var(--gold-light);
+  display: flex; align-items: center;
+  justify-content: center; gap: 8px;
+}
+.ji-xiong {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 18px; letter-spacing: 1px;
+  padding: 2px 8px; border-radius: 6px;
+}
+.ji-xiong.ji   { color: #6fcf8a; border: 1px solid rgba(111,207,138,0.3); background: rgba(111,207,138,0.08); }
+.ji-xiong.xiong{ color: #e07070; border: 1px solid rgba(220,100,100,0.3); background: rgba(220,100,100,0.08); }
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center; margin-top: 4rem;
+  font-size: 10px; letter-spacing: 5px;
+  text-transform: uppercase; color: var(--text-faint);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.three-gua-section.visible .gua-panel { animation: fadeUp 0.5s ease both; }
+.three-gua-section.visible .gua-panel:nth-child(2) { animation-delay: 0.08s; }
+.three-gua-section.visible .gua-panel:nth-child(3) { animation-delay: 0.16s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 580px) {
+  .three-gua-row { grid-template-columns: 1fr; }
+  .sum-grid { grid-template-columns: 1fr; }
+  .phone-input { font-size: 18px; letter-spacing: 3px; }
+  .calc-btn { padding: 0 1.1rem; font-size: 19px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <p class="header-eyebrow">八 卦 风 水</p>
+    <h1>号码风水</h1>
+    <p class="header-sub">Minna Phone Number Calculation</p>
+    <div class="header-rule"></div>
+  </header>
+
+  <!-- INPUT -->
+  <div class="input-wrap">
+    <span class="input-label">输入您的电话号码</span>
+    <div class="input-row">
+      <input type="tel" class="phone-input" id="phoneInput"
+        placeholder="01112345678" maxlength="11"
+        inputmode="numeric" autocomplete="off" />
+      <button class="calc-btn" onclick="calculate()">算 卦</button>
+    </div>
+    <p class="error-msg" id="errorMsg"></p>
+  </div>
+
+  <!-- DIGIT SPLIT -->
+  <div class="split-section" id="splitSection">
+    <div class="split-label-row">
+      <span class="split-label shang">上 卦</span>
+      <span class="split-label xia">下 卦</span>
+    </div>
+    <div class="pills-row" id="pillsRow"></div>
+  </div>
+
+  <!-- SUM CARDS -->
+  <div class="results-section" id="resultsSection">
+    <div class="sum-grid">
+      <div class="sum-card shang">
+        <span class="bg-hanzi">乾</span>
+        <div class="sum-card-title">上 卦</div>
+        <div class="sum-row">
+          <span class="sum-row-label">数字</span>
+          <span class="sum-row-val" id="shangDigits"></span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-row-label">总和</span>
+          <span class="sum-row-val" id="shangSum"></span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-row-label">÷ 8 余数</span>
+          <span class="sum-row-val big" id="shangRem"></span>
+        </div>
+      </div>
+      <div class="sum-card xia">
+        <span class="bg-hanzi">坤</span>
+        <div class="sum-card-title">下 卦</div>
+        <div class="sum-row">
+          <span class="sum-row-label">数字</span>
+          <span class="sum-row-val" id="xiaDigits"></span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-row-label">总和</span>
+          <span class="sum-row-val" id="xiaSum"></span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-row-label">÷ 8 余数</span>
+          <span class="sum-row-val big" id="xiaRem"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THREE HEXAGRAMS -->
+  <div class="three-gua-section" id="threeGuaSection">
+    <div class="section-label">
+      <span class="section-label-text">六 十 四 卦</span>
+    </div>
+    <div class="three-gua-row">
+
+      <!-- 主卦 -->
+      <div class="gua-panel-outer" id="zhugua-outer">
+          <div class="gua-panel" style="flex:1;">
+            <div class="gua-panel-header">
+              <div class="gua-panel-zh">主 卦</div>
+              <div class="gua-panel-sub">Present</div>
+            </div>
+            <div class="hex-lines-wrap" id="zhugua-lines"></div>
+            <div class="hex-result">
+              <div class="hex-num" id="zhu-num"></div>
+              <div class="hex-name" id="zhu-name"></div>
+            </div>
+            <div class="wuxing-result">
+              <div class="wuxing-result-label">五行生克</div>
+              <div class="wuxing-result-value" id="wuxing-result"></div>
+            </div>
+          </div>
+      </div>
+
+      <!-- 互卦 -->
+      <div class="gua-panel-outer">
+        <div class="gua-panel" style="flex:1;">
+          <div class="gua-panel-header">
+            <div class="gua-panel-zh">互 卦</div>
+            <div class="gua-panel-sub">Process</div>
+          </div>
+          <div class="hex-lines-wrap" id="hugua-lines"></div>
+          <div class="hex-result">
+            <div class="hex-num" id="hu-num"></div>
+            <div class="hex-name" id="hu-name"></div>
+          </div>
+          <div class="wuxing-result">
+            <div class="wuxing-result-label">五行生克</div>
+            <div class="wuxing-result-value" id="hu-wuxing-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 之卦 -->
+      <div class="gua-panel-outer">
+        <div class="gua-panel" style="flex:1;">
+          <div class="gua-panel-header">
+            <div class="gua-panel-zh">之 卦</div>
+            <div class="gua-panel-sub">Result</div>
+          </div>
+          <div class="hex-lines-wrap" id="zhigua-lines"></div>
+          <div class="hex-result">
+            <div class="hex-num" id="zhi-num"></div>
+            <div class="hex-name" id="zhi-name"></div>
+          </div>
+          <div class="wuxing-result">
+            <div class="wuxing-result-label">五行生克</div>
+            <div class="wuxing-result-value" id="zhi-wuxing-result"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <p class="moving-note" id="movingNote"></p>
+  </div>
+
+  <footer class="footer">号码风水 · Minna Phone Number Calculation · 八卦风水</footer>
+</div>
+
+<script>
+var TRIGRAMS = {
+  1: { name:'乾', pinyin:'Qián', element:'Heaven',   symbol:'☰', wuxing:'金', lines:[true,true,true]   },
+  2: { name:'兑', pinyin:'Duì',  element:'Lake',     symbol:'☱', wuxing:'金', lines:[false,true,true]  },
+  3: { name:'离', pinyin:'Lí',   element:'Fire',     symbol:'☲', wuxing:'火', lines:[true,false,true]  },
+  4: { name:'震', pinyin:'Zhèn', element:'Thunder',  symbol:'☳', wuxing:'木', lines:[false,false,true] },
+  5: { name:'巽', pinyin:'Xùn',  element:'Wind',     symbol:'☴', wuxing:'木', lines:[true,true,false]  },
+  6: { name:'坎', pinyin:'Kǎn',  element:'Water',    symbol:'☵', wuxing:'水', lines:[false,true,false] },
+  7: { name:'艮', pinyin:'Gèn',  element:'Mountain', symbol:'☶', wuxing:'土', lines:[true,false,false] },
+  8: { name:'坤', pinyin:'Kūn',  element:'Earth',    symbol:'☷', wuxing:'土', lines:[false,false,false]}
+};
+
+var HEXAGRAMS = {
+  '1-1':['1','乾'],'1-2':['43','夬'],'1-3':['14','大有'],'1-4':['34','大壮'],
+  '1-5':['9','小畜'],'1-6':['5','需'],'1-7':['26','大畜'],'1-8':['11','泰'],
+  '2-1':['10','履'],'2-2':['58','兑'],'2-3':['38','睽'],'2-4':['54','归妹'],
+  '2-5':['61','中孚'],'2-6':['60','节'],'2-7':['41','损'],'2-8':['19','临'],
+  '3-1':['13','同人'],'3-2':['49','革'],'3-3':['30','离'],'3-4':['55','丰'],
+  '3-5':['37','家人'],'3-6':['63','既济'],'3-7':['22','贲'],'3-8':['36','明夷'],
+  '4-1':['25','无妄'],'4-2':['17','随'],'4-3':['21','噬嗑'],'4-4':['51','震'],
+  '4-5':['42','益'],'4-6':['3','屯'],'4-7':['27','颐'],'4-8':['24','复'],
+  '5-1':['44','姤'],'5-2':['28','大过'],'5-3':['50','鼎'],'5-4':['32','恒'],
+  '5-5':['57','巽'],'5-6':['48','井'],'5-7':['18','蛊'],'5-8':['46','升'],
+  '6-1':['6','讼'],'6-2':['47','困'],'6-3':['64','未济'],'6-4':['40','解'],
+  '6-5':['59','涣'],'6-6':['29','坎'],'6-7':['4','蒙'],'6-8':['7','师'],
+  '7-1':['33','遁'],'7-2':['31','咸'],'7-3':['56','旅'],'7-4':['62','小过'],
+  '7-5':['53','渐'],'7-6':['39','蹇'],'7-7':['52','艮'],'7-8':['15','谦'],
+  '8-1':['12','否'],'8-2':['45','萃'],'8-3':['35','晋'],'8-4':['16','豫'],
+  '8-5':['20','观'],'8-6':['8','比'],'8-7':['23','剥'],'8-8':['2','坤']
+};
+
+function findTrigram(linesArr) {
+  for (var k = 1; k <= 8; k++) {
+    var t = TRIGRAMS[k];
+    if (t.lines[0]===linesArr[0] && t.lines[1]===linesArr[1] && t.lines[2]===linesArr[2])
+      return { key: k, trigram: t };
+  }
+  return null;
+}
+
+// Build one yao row element
+function makeYaoRow(isSolid, hasDot) {
+  var row = document.createElement('div');
+  row.className = 'yao-row';
+
+  var inner = document.createElement('div');
+  inner.className = 'yao-inner';
+
+  if (isSolid) {
+    var bar = document.createElement('div');
+    bar.className = 'yao-solid-bar';
+    inner.appendChild(bar);
+  } else {
+    var l = document.createElement('div'); l.className = 'yao-broken-l';
+    var r = document.createElement('div'); r.className = 'yao-broken-r';
+    inner.appendChild(l); inner.appendChild(r);
+  }
+  row.appendChild(inner);
+
+  var dotWrap = document.createElement('div');
+  dotWrap.className = 'yao-dot-wrap';
+  if (hasDot) {
+    var dot = document.createElement('div');
+    dot.className = 'yao-dot';
+    dotWrap.appendChild(dot);
+  }
+  row.appendChild(dotWrap);
+  return row;
+}
+
+// Build trigram label row (no tag inside)
+function makeTrigramLabel(trigram, tag) {
+  var wrap = document.createElement('div');
+  wrap.className = 'trigram-label';
+  wrap.setAttribute('data-tag', tag || '');
+  var sym = document.createElement('span');
+  sym.className = 'tri-symbol'; sym.textContent = trigram.symbol;
+  var info = document.createElement('div');
+  info.className = 'tri-info';
+  var name = document.createElement('div');
+  name.className = 'tri-name';
+  name.textContent = trigram.name + '(' + trigram.wuxing + ')';
+  info.appendChild(name);
+  wrap.appendChild(sym); wrap.appendChild(info);
+  return wrap;
+}
+
+// Build a 用卦/体卦 side label element (absolutely positioned outside panel)
+function makeSideLabel(text) {
+  var el = document.createElement('div');
+  el.className = 'ti-yong-label ' + (text === '用卦' ? 'yong' : 'ti');
+  el.textContent = text;
+  return el;
+}
+
+// After rendering, position labels outside panel aligned to trigram rows
+function positionSideLabels(panelOuterId, upperTag, lowerTag) {
+  var outer = document.getElementById(panelOuterId);
+  if (!outer) return;
+  // Remove old labels
+  outer.querySelectorAll('.ti-yong-label').forEach(function(el){ el.remove(); });
+
+  // Find trigram-label rows with data-tag
+  var rows = outer.querySelectorAll('.trigram-label[data-tag]');
+  rows.forEach(function(row) {
+    var tag = row.getAttribute('data-tag');
+    if (!tag) return;
+    var label = makeSideLabel(tag);
+    // Position relative to outer container
+    outer.appendChild(label);
+    // Use setTimeout to allow layout, then measure
+    setTimeout(function() {
+      var outerRect = outer.getBoundingClientRect();
+      var rowRect   = row.getBoundingClientRect();
+      var topOffset = rowRect.top - outerRect.top + (rowRect.height / 2) - 20;
+      label.style.top = topOffset + 'px';
+    }, 0);
+  });
+}
+
+// Render full hexagram into a container
+// fullLines: [line1(bot), line2, line3, line4, line5, line6(top)]
+// movingLine: 1-6 or null
+function renderHexagram(containerId, fullLines, movingLine) {
+  var container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  // upper trigram: lines 6,5,4 → displayed top-to-bottom
+  var upperTri = findTrigram([ fullLines[5], fullLines[4], fullLines[3] ]);
+  // lower trigram: lines 3,2,1 → displayed top-to-bottom
+  var lowerTri = findTrigram([ fullLines[2], fullLines[1], fullLines[0] ]);
+
+  // Determine 用卦 / 体卦 and inject into side labels container
+  var upperTag = '', lowerTag = '';
+  if (movingLine !== null) {
+    if (movingLine >= 4) { upperTag = '用卦'; lowerTag = '体卦'; }
+    else                 { upperTag = '体卦'; lowerTag = '用卦'; }
+
+  }
+
+  // Upper trigram label
+  if (upperTri) container.appendChild(makeTrigramLabel(upperTri.trigram, upperTag));
+
+  // Upper 3 lines (top to bottom = line6, line5, line4)
+  [5,4,3].forEach(function(lineIdx) {
+    var lineNum = lineIdx + 1; // 1-based
+    container.appendChild(makeYaoRow(fullLines[lineIdx], movingLine === lineNum));
+  });
+
+  // Separator
+  var sep = document.createElement('div'); sep.className = 'hex-separator';
+  container.appendChild(sep);
+
+  // Lower 3 lines (top to bottom = line3, line2, line1)
+  [2,1,0].forEach(function(lineIdx) {
+    var lineNum = lineIdx + 1;
+    container.appendChild(makeYaoRow(fullLines[lineIdx], movingLine === lineNum));
+  });
+
+  // Lower trigram label
+  if (lowerTri) container.appendChild(makeTrigramLabel(lowerTri.trigram, lowerTag));
+
+  return { upper: upperTri, lower: lowerTri, upperTag: upperTag, lowerTag: lowerTag };
+}
+
+function sumGroup(digits) {
+  return digits.reduce(function(acc,d){ return acc + (d==='0'?8:parseInt(d)); }, 0);
+}
+
+function calculate() {
+  var raw = document.getElementById('phoneInput').value.trim().replace(/\D/g,'');
+  var err = document.getElementById('errorMsg');
+
+  ['splitSection','resultsSection','threeGuaSection'].forEach(function(id){
+    document.getElementById(id).classList.remove('visible');
+  });
+  err.textContent = '';
+
+  if (raw.length !== 10 && raw.length !== 11) {
+    err.textContent = 'Please enter a valid 10 or 11 digit phone number.';
+    return;
+  }
+
+  var shang = raw.slice(0,5).split('');
+  var xia   = raw.slice(5).split('');
+
+  var shangSum = sumGroup(shang);
+  var xiaSum   = sumGroup(xia);
+  var shangRem = shangSum % 8 === 0 ? 8 : shangSum % 8;
+  var xiaRem   = xiaSum  % 8 === 0 ? 8 : xiaSum  % 8;
+
+  // Pills
+  var pillsRow = document.getElementById('pillsRow');
+  pillsRow.innerHTML = '';
+  shang.forEach(function(d){
+    var p = document.createElement('div');
+    p.className='digit-pill pill-shang'; p.textContent=d; pillsRow.appendChild(p);
+  });
+  var dv = document.createElement('div'); dv.className='pill-divider'; pillsRow.appendChild(dv);
+  xia.forEach(function(d){
+    var p = document.createElement('div');
+    p.className='digit-pill pill-xia'; p.textContent=d; pillsRow.appendChild(p);
+  });
+
+  document.getElementById('shangDigits').textContent = shang.join(' · ');
+  document.getElementById('shangSum').textContent    = shangSum;
+  document.getElementById('shangRem').textContent    = shangRem;
+  document.getElementById('xiaDigits').textContent   = xia.join(' · ');
+  document.getElementById('xiaSum').textContent      = xiaSum;
+  document.getElementById('xiaRem').textContent      = xiaRem;
+
+  document.getElementById('splitSection').classList.add('visible');
+  document.getElementById('resultsSection').classList.add('visible');
+
+  // ── Build fullLines [line1..line6] bottom to top ──
+  var upper = TRIGRAMS[shangRem]; // upper trigram lines[0]=top=line6, [2]=bottom=line4
+  var lower = TRIGRAMS[xiaRem];   // lower trigram lines[0]=top=line3, [2]=bottom=line1
+  var fullLines = [
+    lower.lines[2], lower.lines[1], lower.lines[0], // lines 1,2,3
+    upper.lines[2], upper.lines[1], upper.lines[0]  // lines 4,5,6
+  ];
+
+  // Moving yao
+  var totalSum  = shangSum + xiaSum;
+  var movingLine = totalSum % 6 === 0 ? 6 : totalSum % 6;
+
+  // ── 五行生克 logic ──
+  // Generation cycle: 木→火→土→金→水→木
+  // Restraint cycle:  木克土, 土克水, 水克火, 火克金, 金克木
+  // Logic: 体 - 用 (ti acts as reference, yong is what ti meets)
+  // 木体: 木-木=比旺, 木-火=生出, 木-土=克出, 木-金=克入, 木-水=生入
+  // 火体: 火-火=比旺, 火-土=生出, 火-金=克出, 火-水=克入, 火-木=生入
+  // 土体: 土-土=比旺, 土-金=生出, 土-水=克出, 土-木=克入, 土-火=生入
+  // 金体: 金-金=比旺, 金-水=生出, 金-木=克出, 金-火=克入, 金-土=生入
+  // 水体: 水-水=比旺, 水-木=生出, 水-火=克出, 水-土=克入, 水-金=生入
+  var JI_XIONG = { '比旺':'吉', '生出':'凶', '克出':'吉', '克入':'凶', '生入':'吉' };
+
+  function getWuxingRelation(yongWuxing, tiWuxing) {
+    if (tiWuxing === yongWuxing) return '比旺';
+    var shengOut = { '木':'火', '火':'土', '土':'金', '金':'水', '水':'木' };
+    var keOut    = { '木':'土', '火':'金', '土':'水', '金':'木', '水':'火' };
+    var shengIn  = { '木':'水', '火':'木', '土':'火', '金':'土', '水':'金' };
+    var keIn     = { '木':'金', '火':'水', '土':'木', '金':'火', '水':'土' };
+    if (shengOut[tiWuxing] === yongWuxing) return '生出';
+    if (keOut[tiWuxing]    === yongWuxing) return '克出';
+    if (shengIn[tiWuxing]  === yongWuxing) return '生入';
+    if (keIn[tiWuxing]     === yongWuxing) return '克入';
+    return '';
+  }
+
+  function setWuxingResult(elId, relation) {
+    var el = document.getElementById(elId);
+    if (!el) return;
+    el.innerHTML = '';
+    var text = document.createTextNode(relation);
+    el.appendChild(text);
+    if (relation && JI_XIONG[relation]) {
+      var badge = document.createElement('span');
+      var isJi = JI_XIONG[relation] === '吉';
+      badge.className = 'ji-xiong ' + (isJi ? 'ji' : 'xiong');
+      badge.textContent = JI_XIONG[relation];
+      el.appendChild(badge);
+    }
+  }
+
+  // ── 主卦 ──
+  var zhuResult = renderHexagram('zhugua-lines', fullLines, movingLine);
+  if (zhuResult.upper && zhuResult.lower) {
+    var zhuKey = zhuResult.upper.key + '-' + zhuResult.lower.key;
+    var zhuHex = HEXAGRAMS[zhuKey];
+    if (zhuHex) {
+      document.getElementById('zhu-num').textContent  = '第 ' + zhuHex[0] + ' 卦';
+      document.getElementById('zhu-name').textContent = zhuHex[1];
+    }
+
+    // Position 体卦/用卦 labels outside panel
+    positionSideLabels('zhugua-outer', zhuResult.upperTag, zhuResult.lowerTag);
+
+    // 五行生克: determine 用卦 and 体卦 wuxing
+    var isUpperYong = (zhuResult.upperTag === '用卦');
+    var yongKey = isUpperYong ? zhuResult.upper.key : zhuResult.lower.key;
+    var tiKey   = isUpperYong ? zhuResult.lower.key : zhuResult.upper.key;
+    var yongWuxing = TRIGRAMS[yongKey].wuxing;
+    var tiWuxing   = TRIGRAMS[tiKey].wuxing;
+    var relation   = getWuxingRelation(yongWuxing, tiWuxing);
+    setWuxingResult('wuxing-result', relation);
+  }
+
+  // ── 互卦 ──
+  // Lower trigram of 互卦 = lines 2,3,4 → top-to-bottom = line4,line3,line2
+  var huLowerLines = [ fullLines[3], fullLines[2], fullLines[1] ];
+  // Upper trigram of 互卦 = lines 3,4,5 → top-to-bottom = line5,line4,line3
+  var huUpperLines = [ fullLines[4], fullLines[3], fullLines[2] ];
+  var huFullLines  = [
+    fullLines[1], fullLines[2], fullLines[3], // lines 1=line2,2=line3,3=line4
+    fullLines[2], fullLines[3], fullLines[4]  // lines 4=line3,5=line4,6=line5
+  ];
+  // Render互卦 directly
+  var huContainer = document.getElementById('hugua-lines');
+  huContainer.innerHTML = '';
+  var huUpperTri = findTrigram(huUpperLines);
+  var huLowerTri = findTrigram(huLowerLines);
+  if (huUpperTri) huContainer.appendChild(makeTrigramLabel(huUpperTri.trigram, ''));
+  huUpperLines.forEach(function(solid){ huContainer.appendChild(makeYaoRow(solid, false)); });
+  var sep2 = document.createElement('div'); sep2.className='hex-separator'; huContainer.appendChild(sep2);
+  huLowerLines.forEach(function(solid){ huContainer.appendChild(makeYaoRow(solid, false)); });
+  if (huLowerTri) huContainer.appendChild(makeTrigramLabel(huLowerTri.trigram, ''));
+  if (huUpperTri && huLowerTri) {
+    var huKey = huUpperTri.key + '-' + huLowerTri.key;
+    var huHex = HEXAGRAMS[huKey];
+    if (huHex) {
+      document.getElementById('hu-num').textContent  = '第 ' + huHex[0] + ' 卦';
+      document.getElementById('hu-name').textContent = huHex[1];
+    }
+    // 五行生克 for 互卦 — same 用/体 position as 主卦
+    var huYongKey    = (movingLine >= 4) ? huUpperTri.key : huLowerTri.key;
+    var huTiKey      = (movingLine >= 4) ? huLowerTri.key : huUpperTri.key;
+    var huYongWuxing = TRIGRAMS[huYongKey].wuxing;
+    var huTiWuxing   = TRIGRAMS[huTiKey].wuxing;
+    setWuxingResult('hu-wuxing-result', getWuxingRelation(huYongWuxing, huTiWuxing));
+  }
+
+  // ── 之卦 ──
+  var zhiLines = fullLines.slice();
+  zhiLines[movingLine - 1] = !zhiLines[movingLine - 1]; // flip moving line
+  var zhiResult = renderHexagram('zhigua-lines', zhiLines, null);
+  if (zhiResult.upper && zhiResult.lower) {
+    var zhiKey = zhiResult.upper.key + '-' + zhiResult.lower.key;
+    var zhiHex = HEXAGRAMS[zhiKey];
+    if (zhiHex) {
+      document.getElementById('zhi-num').textContent  = '第 ' + zhiHex[0] + ' 卦';
+      document.getElementById('zhi-name').textContent = zhiHex[1];
+    }
+    // 五行生克 for 之卦 — same 用/体 position as 主卦
+    var zhiYongKey    = (movingLine >= 4) ? zhiResult.upper.key : zhiResult.lower.key;
+    var zhiTiKey      = (movingLine >= 4) ? zhiResult.lower.key : zhiResult.upper.key;
+    var zhiYongWuxing = TRIGRAMS[zhiYongKey].wuxing;
+    var zhiTiWuxing   = TRIGRAMS[zhiTiKey].wuxing;
+    setWuxingResult('zhi-wuxing-result', getWuxingRelation(zhiYongWuxing, zhiTiWuxing));
+  }
+
+  document.getElementById('movingNote').textContent =
+    '动爻 · ' + shangSum + ' + ' + xiaSum + ' = ' + totalSum + '  ÷ 6  →  Line ' + movingLine;
+  document.getElementById('threeGuaSection').classList.add('visible');
+}
+
+document.getElementById('phoneInput').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') calculate();
+});
+</script>
+</body>
+</html>
